@@ -115,7 +115,9 @@ input:focus {
   top: 11px;
   color: #94a3b8;
 }
-
+.hidden{
+    display:none;
+}
 .demo {
   background: #eaf4ff;
   border: 1px solid #bfdbfe;
@@ -150,5 +152,129 @@ input:focus {
 
 .submit:hover {
   background: #0b5ed7;
+}
+
+#role{
+    width: 100%;
+
+    height: 48px;
+
+    padding: 0 15px;
+
+    margin-top: 8px;
+    margin-bottom: 18px;
+
+    border: 1px solid #d8dee8;
+
+    border-radius: 15px;
+
+    background-color: #f8fafc;
+
+    color: #334155;
+
+    font-size: 14px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+#role:hover{
+    border-color: #94a3b8;
+}
+
+#role:focus{
+    border-color: #0d6efd;
+
+    box-shadow: 0 0 0 4px rgba(13,110,253,.15);
+
+    background: white;
+}
+
+#role option{
+    background: white;
+
+    color: #0f172a;
+}
+/* TEMA CLARO */
+body{
+    background:#ffffff;
+    color:#0f172a;
+
+    transition:.3s;
+}
+
+/* BOTÃO */
+#theme{
+
+    margin-left:auto;
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#0d6efd;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:18px;
+}
+
+
+/* TEMA ESCURO */
+.dark{
+
+    background:#0f172a;
+
+    color:white;
+
+}
+
+.dark .card{
+
+    background:#0f172a;
+
+}
+
+.dark input,
+.dark #role{
+
+    background:#334155;
+    color:white;
+    border:1px solid #475569;
+}
+
+.dark .demo{
+
+    background:#172554;
+
+}
+
+.dark .alert{
+
+    background:#3b0a0a;
+
+    color:#ffb4b4;
+
+}
+
+.dark .tabs{
+
+    background:#334155;
+
+}
+
+.dark button{
+
+    color:white;
+
 }
 
