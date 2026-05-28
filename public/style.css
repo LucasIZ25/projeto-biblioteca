@@ -276,5 +276,46 @@ body{
 
     color:white;
 
+}.back-btn{
+
+    width:100%;
+
+    height:45px;
+
+    margin-top:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#e2e8f0;
+
+    color:#0f172a;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    transition:.2s;
+}
+
+.back-btn:hover{
+
+    background:#cbd5e1;
+
+}.dark .back-btn{
+
+    background:#334155;
+
+    color:white;
+
+}
+
+.dark .back-btn:hover{
+
+    background:#475569;
+
 }
 
