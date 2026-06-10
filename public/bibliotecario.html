@@ -4,11 +4,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgQ5jvlXzOgFZR4tJlt8mWzaP14YoR6SDUdA&s" />
+    <link rel="stylesheet" href="bibilotecario.css">
+</head>
+    <title>Pagina-Bibliotecário</title>
 </head>
 <body>
 
-    <h1>Bem-vindo, Bibliotecário!</h1>
-    <p>Aqui você pode gerenciar os livros, os leitores e as reservas.</p>
+    <nav>
+        <a href="#" class="menu-link active" data-page="dashboard">Dashboard</a>
+        <a href="#" class="menu-link" data-page="livros">Livros</a>
+        <a href="#" class="menu-link" data-page="emprestimos">Empréstimos</a>
+    </nav>
+    <div class="caixaUsuario">
+        <div>
+            <strong id="nomeUsuario"></strong>
+            <span id="tipoUsuario"></span>
+        </div>
+    </div>
+
+    <button class="logout">↪ Sair</button>
+
+     <section id="dashboard" class="page active">
+      <header class="top">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Olá, <span id="saudacaoUsuario">Usuário</span> </p>
+        </div>
+      </header>
+
+      <div class="cards">
+        <div class="card">
+          <div class="icone azul"></div>
+          <div>
+            <h2 id="totalLivros">0</h2>
+            <p>Total de Livros</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icone roxo"></div>
+          <div>
+            <h2 id="emprestimosAtivos">0</h2>
+            <p>Empréstimos Ativos</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icone verde"></div>
+          <div>
+            <h2 id="livrosDisponiveis">0</h2>
+            <p>Livros Disponíveis</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icone vermelho"></div>
+          <div>
+            <h2 id="livrosAtrasados">0</h2>
+            <p>Em Atraso</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabela-emprestimos">
+        <div class="tabela-header">
+          <h3>Empréstimos Recentes</h3>
+          <a href="#" data-page="emprestimos" class="menu-link-small">Ver todos →</a>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Leitor</th>
+              <th>Livro</th>
+              <th>Vencimento</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody id="tabelaEmprestimosRecentes">
+            <!-- O JavaScript vai preencher aqui -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+     <section id="livros" class="page">
+      <header class="top row">
+        <div>
+          <h1>Gestão de Livros</h1>
+          <p>Olá, <span id="saudacaoUsuarioLivros">Usuário</span> </p>
+        </div>
+
+        <input 
+          type="text" 
+          id="buscarLivro" 
+          class="search" 
+          placeholder="Buscar livro..." 
+        />
+      </header>
+
+      <div class="actions">
+        <p><span id="contadorLivros">0</span> livros no acervo</p>
+        <button class="btn-primary" id="btnMostrarFormulario">+ Novo Livro</button>
+      </div>
+
+      <form id="formLivro" class="form-livro">
+        <input type="hidden" id="idLivro" />
+
+        <input 
+          type="text" 
+          id="tituloLivro" 
+          placeholder="Título do livro" 
+          required 
+        />
+
+        <input 
+          type="text" 
+          id="autorLivro" 
+          placeholder="Autor" 
+          required 
+        />
+
+        <input 
+          type="number" 
+          id="anoLivro" 
+          placeholder="Ano" 
+          required 
+        />
+
+        <input 
+          type="number" 
+          id="quantidadeLivro" 
+          placeholder="Quantidade inicial" 
+          required 
+        />
+
+        <button type="submit" id="btnSalvarLivro">Cadastrar</button>
+      </form>
+
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Ano</th>
+              <th>Disponível</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody id="tabelaLivros">
+            <!-- O JavaScript vai preencher os livros aqui -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="emprestimos" class="page">
+      <header class="top">
+        <div>
+          <h1>Empréstimos</h1>
+          <p>Olá, <span id="saudacaoUsuarioEmprestimos">Usuário</span> 👋</p>
+        </div>
+      </header>
+
+      <div class="table-box">
+        <div class="table-header column">
+          <h3>Todos os Empréstimos</h3>
+          <p><span id="contadorEmprestimos">0</span> registros</p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Leitor</th>
+              <th>Livro</th>
+              <th>Empréstimo</th>
+              <th>Vencimento</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+
+          <tbody id="tabelaEmprestimos">
+            <!-- O JavaScript vai preencher os empréstimos aqui -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="bibliotecario.js"></script>
+
 </body>
 </html>
