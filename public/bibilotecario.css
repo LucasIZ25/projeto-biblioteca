@@ -10,7 +10,6 @@ body {
     color: #132238;
 }
 
-/* ===== MENU SUPERIOR ===== */
 
 nav {
     background-color: white;
@@ -36,7 +35,7 @@ nav {
     color: white;
 }
 
-/* ===== USUÁRIO ===== */
+
 
 .caixaUsuario {
     position: absolute;
@@ -54,7 +53,6 @@ nav {
     font-size: 12px;
 }
 
-/* ===== SAIR ===== */
 
 .logout {
     position: absolute;
@@ -67,10 +65,14 @@ nav {
     font-size: 14px;
 }
 
-/* ===== PÁGINAS ===== */
+
 
 .page {
     padding: 25px;
+    display:none
+}
+.page.active {
+    display: block;
 }
 
 .top {
@@ -85,8 +87,6 @@ nav {
 .top p {
     color: gray;
 }
-
-/* ===== CARDS ===== */
 
 .cards {
     display: grid;
@@ -137,7 +137,7 @@ nav {
     background-color: #ff1e35;
 }
 
-/* ===== TABELAS ===== */
+
 
 .tabela-emprestimos,
 .table-box {
@@ -181,7 +181,6 @@ td {
     border-top: 1px solid #eee;
 }
 
-/* ===== LIVROS ===== */
 
 .row {
     display: flex;
@@ -242,7 +241,7 @@ td {
     cursor: pointer;
 }
 
-/* ===== STATUS ===== */
+
 
 .status {
     padding: 5px 10px;
@@ -266,7 +265,6 @@ td {
     color: green;
 }
 
-/* ===== BOTÕES ===== */
 
 .btn-editar,
 .btn-excluir,
@@ -292,7 +290,6 @@ td {
     color: green;
 }
 
-/* ===== RESPONSIVO ===== */
 
 @media (max-width: 768px) {
 
