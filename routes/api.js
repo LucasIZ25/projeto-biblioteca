@@ -4,6 +4,7 @@ const router = express.Router();
 let livros = [];
 let emprestimos = [];
 
+
 router.get('/livros', (req, res) => {
   res.json(livros);
 });

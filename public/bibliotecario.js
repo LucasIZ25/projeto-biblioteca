@@ -20,3 +20,69 @@ links.forEach((link) => {
     document.getElementById(pagina).classList.add("active");
   });
 });
+
+const formLivro = document.getElementById("formLivro");
+
+formLivro.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const titulo = document.getElementById("tituloLivro").value;
+  const autor = document.getElementById("autorLivro").value;
+  const ano = Number(document.getElementById("anoLivro").value);
+  const quantidade = Number(document.getElementById("quantidadeLivro").value);
+
+  const resposta = await fetch("/api/livros", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      titulo,
+      autor,
+      ano,
+      quantidade
+    })
+  });
+
+  const livro = await resposta.json();
+
+  alert(`Livro "${livro.titulo}" cadastrado com sucesso!`);
+
+  formLivro.reset();
+  carregarLivros();
+});
+
+async function carregarLivros() {
+  const resposta = await fetch("/api/livros");
+  const livros = await resposta.json();
+
+  const tabela = document.getElementById("tabelaLivros");
+  tabela.innerHTML = "";
+
+  livros.forEach((livro) => {
+    tabela.innerHTML += `
+      <tr>
+        <td>${livro.id}</td>
+        <td>${livro.titulo}</td>
+        <td>${livro.autor}</td>
+        <td>${livro.ano}</td>
+        <td>${livro.disponivel}</td>
+        <td>
+          <button onclick="deletarLivro(${livro.id})">
+            Excluir
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+async function deletarLivro(id) {
+  await fetch(`/api/livros/${id}`, {
+    method: "DELETE"
+  });
+
+  carregarLivros();
+}
+
+carregarLivros();
