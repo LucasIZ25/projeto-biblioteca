@@ -33,7 +33,7 @@ const livrosDisponiveis = document.getElementById("livrosDisponiveis");
 
 async function carregarLivros() {
   try {
-    const resposta = await fetch("api/livros");
+    const resposta = await fetch("/api/livros");
     const livros = await resposta.json();
 
     console.log(livros);
@@ -90,7 +90,7 @@ formLivro.addEventListener("submit", async (event) => {
 
   try {
     if (idLivro) {
-      await fetch(`api/livros/${idLivro}`, {
+      await fetch(`/api/livros/${idLivro}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -100,7 +100,7 @@ formLivro.addEventListener("submit", async (event) => {
 
       alert("Livro atualizado com sucesso!");
     } else {
-      await fetch("api/livros", {
+      await fetch("/api/livros", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -123,7 +123,7 @@ formLivro.addEventListener("submit", async (event) => {
 
 async function editarLivro(id) {
   try {
-    const resposta = await fetch(`api/livros/${id}`);
+    const resposta = await fetch(`/api/livros/${id}`);
     const livro = await resposta.json();
 
     document.getElementById("idLivro").value = livro.id;
@@ -140,7 +140,7 @@ async function editarLivro(id) {
 
 async function excluirLivro(id) {
   try {
-    await fetch(`api/livros/${id}`, {
+    await fetch(`/api/livros/${id}`, {
       method: "DELETE"
     });
 
