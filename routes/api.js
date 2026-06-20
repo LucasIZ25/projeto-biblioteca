@@ -1,56 +1,87 @@
 const express = require('express');
 const router = express.Router();
-
-let livros = [];
+const db = require('../db');
 
 router.get('/livros', (req, res) => {
-  res.json(livros);
+  const sql = `
+    SELECT 
+      id,
+      titulo,
+      autor,
+      ano,
+      quantidade_total AS quantidade,
+      quantidade_disponivel AS disponivel
+    FROM livros
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ erro: err.message });
+    }
+
+    res.json(results);
+  });
 });
 
 router.post('/livros', (req, res) => {
   const { titulo, autor, ano, quantidade } = req.body;
 
-  const novoLivro = {
-    id: Date.now(),
-    titulo: titulo,
-    autor: autor,
-    ano: ano,
-    quantidade: quantidade,
-    disponivel: quantidade
-  };
+  const sql = `
+    INSERT INTO livros 
+    (titulo, autor, ano, quantidade_total, quantidade_disponivel)
+    VALUES (?, ?, ?, ?, ?)
+  `;
 
-  livros.push(novoLivro);
+  db.query(sql, [titulo, autor, ano, quantidade, quantidade], (err, result) => {
+    if (err) {
+      return res.status(500).json({ erro: err.message });
+    }
 
-  res.status(201).json(novoLivro);
+    res.status(201).json({
+      id: result.insertId,
+      titulo,
+      autor,
+      ano,
+      quantidade,
+      disponivel: quantidade
+    });
+  });
 });
 
 router.put('/livros/:id', (req, res) => {
-  const id = Number(req.params.id);
+  const id = req.params.id;
+  const { titulo, autor, ano, quantidade, disponivel } = req.body;
 
-  const livro = livros.find((livro) => livro.id === id);
+  const sql = `
+    UPDATE livros
+    SET titulo = ?, autor = ?, ano = ?, quantidade_total = ?, quantidade_disponivel = ?
+    WHERE id = ?
+  `;
 
-  if (!livro) {
-    return res.status(404).json({
-      mensagem: 'Livro não encontrado'
+  db.query(sql, [titulo, autor, ano, quantidade, disponivel, id], (err) => {
+    if (err) {
+      return res.status(500).json({ erro: err.message });
+    }
+
+    res.json({
+      mensagem: 'Livro atualizado com sucesso'
     });
-  }
-
-  livro.titulo = req.body.titulo;
-  livro.autor = req.body.autor;
-  livro.ano = req.body.ano;
-  livro.quantidade = req.body.quantidade;
-  livro.disponivel = req.body.disponivel;
-
-  res.json(livro);
+  });
 });
 
 router.delete('/livros/:id', (req, res) => {
-  const id = Number(req.params.id);
+  const id = req.params.id;
 
-  livros = livros.filter((livro) => livro.id !== id);
+  const sql = 'DELETE FROM livros WHERE id = ?';
 
-  res.json({
-    mensagem: 'Livro removido com sucesso'
+  db.query(sql, [id], (err) => {
+    if (err) {
+      return res.status(500).json({ erro: err.message });
+    }
+
+    res.json({
+      mensagem: 'Livro removido com sucesso'
+    });
   });
 });
 
