@@ -131,14 +131,3 @@ http://localhost:4000
     <td>Remove um livro</td>
   </tr>
 </table>
-
-<h2>👨‍💻 Autor</h2>
-
-<p>
-  Desenvolvido por <strong>Lucas Alves</strong><br>
-  Estudante de Ciência da Computação - UCB
-</p>
-
-<p>
-  GitHub: <a href="https://github.com/LucasIZ25">LucasIZ25</a>
-</p>
