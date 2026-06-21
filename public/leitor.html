@@ -1,14 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área do Leitor</title>
+  <link rel="stylesheet" href="leitor.css">
+  <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgQ5jvlXzOgFZR4tJlt8mWzaP14YoR6SDUdA&s" />
 </head>
 <body>
 
-    <h1>Bem-vindo, Leitor!</h1>
-    <p>Aqui você pode visualizar os livros disponíveis e fazer reservas.</p>
-    
+  <aside class="sidebar">
+
+    <h2>Biblioteca</h2>
+
+    <nav>
+      <a href="#" class="menu-link active" data-page="catalogo">
+        Catálogo
+      </a>
+
+      <a href="#" class="menu-link" data-page="emprestimos">
+        Meus Empréstimos
+      </a>
+    </nav>
+
+    <div class="usuario-box">
+      <strong id="nomeUsuario">Usuário</strong>
+      <p>Leitor</p>
+    </div>
+
+    <a href="index.html" class="sair">
+      Sair
+    </a>
+
+  </aside>
+
+  <main class="conteudo">
+
+    <section id="catalogo" class="page active">
+
+      <div class="top">
+        <div>
+          <h1>Catálogo de Livros</h1>
+          <p>
+            Olá,
+            <span id="saudacaoUsuario">Usuário</span>
+          </p>
+        </div>
+
+        <input
+          type="text"
+          id="buscarLivro"
+          placeholder="Buscar livro ou autor..."
+        >
+      </div>
+
+      <p>
+        <span id="contadorLivros">0</span>
+        livros disponíveis
+      </p>
+
+      <div id="listaLivros" class="grid-livros">
+
+      </div>
+
+    </section>
+
+    <section id="emprestimos" class="page">
+
+      <div class="top">
+        <div>
+          <h1>Meus Empréstimos</h1>
+          <p>
+            Olá,
+            <span id="saudacaoUsuario2">Usuário</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="tabela-box">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Livro</th>
+              <th>Data Empréstimo</th>
+              <th>Vencimento</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+
+          <tbody id="tabelaEmprestimos">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="leitor.js"></script>
+
 </body>
 </html>

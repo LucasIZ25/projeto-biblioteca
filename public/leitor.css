@@ -1,0 +1,185 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    background: #f2f5f9;
+}
+
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background: white;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    color: #1565ff;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-link {
+    text-decoration: none;
+    color: #333;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.menu-link:hover,
+.menu-link.active {
+    background: #1565ff;
+    color: white;
+}
+
+.sair {
+    display: block;
+    margin-top: 30px;
+    text-decoration: none;
+    color: red;
+}
+
+.conteudo {
+    flex: 1;
+    padding: 25px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.top h1 {
+    color: #0a2b57;
+}
+
+#buscarLivro {
+    padding: 10px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.grid-livros {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.livro-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+
+.livro-capa {
+    height: 120px;
+    background: #1565ff;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 40px;
+}
+
+.livro-info h3 {
+    margin-bottom: 5px;
+}
+
+.livro-info p {
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.disponivel {
+    display: block;
+    color: green;
+    margin: 10px 0;
+}
+
+.btn-solicitar {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: #1565ff;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-solicitar:hover {
+    background: #004de6;
+}
+
+.tabela-box {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #f4f4f4;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+.ativo-status {
+    background: #dbeafe;
+    color: blue;
+}
+
+.atrasado-status {
+    background: #fee2e2;
+    color: red;
+}
+
+.devolvido-status {
+    background: #dcfce7;
+    color: green;
+}
+
+.btn-devolucao {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
