@@ -1,87 +1,142 @@
 const express = require('express');
 const router = express.Router();
+
 const db = require('../db');
+const conexao = db.promise();
 
-router.get('/livros', (req, res) => {
-  const sql = `
-    SELECT 
-      id,
-      titulo,
-      autor,
-      ano,
-      quantidade_total AS quantidade,
-      quantidade_disponivel AS disponivel
-    FROM livros
-  `;
+let livros = [];
+let emprestimos = [];
 
-  db.query(sql, (err, results) => {
-    if (err) {
-      return res.status(500).json({ erro: err.message });
+router.post('/usuarios/cadastro', async (req, res) => {
+  try {
+    const { nome, email, senha, perfil } = req.body;
+
+    if (!nome || !email || !senha || !perfil) {
+      return res.status(400).json({
+        mensagem: 'Preencha todos os campos.'
+      });
     }
 
-    res.json(results);
-  });
+    if (perfil !== 'bibliotecario' && perfil !== 'leitor') {
+      return res.status(400).json({
+        mensagem: 'Perfil inválido.'
+      });
+    }
+
+    const [resultado] = await conexao.query(
+      `
+      INSERT INTO usuarios (nome, email, senha, perfil)
+      VALUES (?, ?, ?, ?)
+      `,
+      [nome, email, senha, perfil]
+    );
+
+    res.status(201).json({
+      id: resultado.insertId,
+      nome,
+      email,
+      perfil
+    });
+
+  } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({
+        mensagem: 'Este e-mail já está cadastrado.'
+      });
+    }
+
+    console.error(error);
+
+    res.status(500).json({
+      mensagem: 'Erro ao cadastrar usuário.'
+    });
+  }
+});
+
+router.post('/usuarios/login', async (req, res) => {
+  try {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+      return res.status(400).json({
+        mensagem: 'Informe e-mail e senha.'
+      });
+    }
+
+    const [usuarios] = await conexao.query(
+      `
+      SELECT id, nome, email, perfil
+      FROM usuarios
+      WHERE email = ? AND senha = ?
+      `,
+      [email, senha]
+    );
+
+    if (usuarios.length === 0) {
+      return res.status(401).json({
+        mensagem: 'E-mail ou senha incorretos.'
+      });
+    }
+
+    res.json(usuarios[0]);
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      mensagem: 'Erro ao fazer login.'
+    });
+  }
+});
+
+router.get('/livros', (req, res) => {
+  res.json(livros);
 });
 
 router.post('/livros', (req, res) => {
   const { titulo, autor, ano, quantidade } = req.body;
 
-  const sql = `
-    INSERT INTO livros 
-    (titulo, autor, ano, quantidade_total, quantidade_disponivel)
-    VALUES (?, ?, ?, ?, ?)
-  `;
+  const novoLivro = {
+    id: Date.now(),
+    titulo: titulo,
+    autor: autor,
+    ano: ano,
+    quantidade: quantidade,
+    disponivel: quantidade
+  };
 
-  db.query(sql, [titulo, autor, ano, quantidade, quantidade], (err, result) => {
-    if (err) {
-      return res.status(500).json({ erro: err.message });
-    }
+  livros.push(novoLivro);
 
-    res.status(201).json({
-      id: result.insertId,
-      titulo,
-      autor,
-      ano,
-      quantidade,
-      disponivel: quantidade
-    });
-  });
+  res.status(201).json(novoLivro);
 });
 
 router.put('/livros/:id', (req, res) => {
-  const id = req.params.id;
-  const { titulo, autor, ano, quantidade, disponivel } = req.body;
+  const id = Number(req.params.id);
 
-  const sql = `
-    UPDATE livros
-    SET titulo = ?, autor = ?, ano = ?, quantidade_total = ?, quantidade_disponivel = ?
-    WHERE id = ?
-  `;
+  const livro = livros.find((livro) => livro.id === id);
 
-  db.query(sql, [titulo, autor, ano, quantidade, disponivel, id], (err) => {
-    if (err) {
-      return res.status(500).json({ erro: err.message });
-    }
-
-    res.json({
-      mensagem: 'Livro atualizado com sucesso'
+  if (!livro) {
+    return res.status(404).json({
+      mensagem: 'Livro não encontrado'
     });
-  });
+  }
+
+  livro.titulo = req.body.titulo;
+  livro.autor = req.body.autor;
+  livro.ano = req.body.ano;
+  livro.quantidade = req.body.quantidade;
+  livro.disponivel = req.body.disponivel;
+
+  res.json(livro);
 });
 
 router.delete('/livros/:id', (req, res) => {
-  const id = req.params.id;
+  const id = Number(req.params.id);
 
-  const sql = 'DELETE FROM livros WHERE id = ?';
+  livros = livros.filter((livro) => livro.id !== id);
 
-  db.query(sql, [id], (err) => {
-    if (err) {
-      return res.status(500).json({ erro: err.message });
-    }
-
-    res.json({
-      mensagem: 'Livro removido com sucesso'
-    });
+  res.json({
+    mensagem: 'Livro removido com sucesso'
   });
 });
 
