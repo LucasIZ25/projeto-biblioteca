@@ -32,62 +32,96 @@ backLogin.addEventListener("click", () => {
 
 const registerFormElement = document.querySelector("#registerForm form");
 
-registerFormElement.addEventListener("submit", (e) => {
+registerFormElement.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById("name").value;
+  const nome = document.getElementById("name").value;
   const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const role = document.getElementById("role").value;
+  const senha = document.getElementById("password").value;
+  const perfil = document.getElementById("role").value;
 
-  if (!name || !email || !password || !role) {
+  if (!nome || !email || !senha || !perfil) {
     alert("Por favor, preencha todos os campos.");
     return;
   }
 
-  const users = JSON.parse(localStorage.getItem("users")) || [];
+  try {
+    const resposta = await fetch("/api/usuarios/cadastro", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        nome,
+        email,
+        senha,
+        perfil
+      })
+    });
 
-  const userExists = users.some((user) => user.email === email);
+    const dados = await resposta.json();
 
-  if (userExists) {
-    alert("Este email já está registrado.");
-    return;
+    if (!resposta.ok) {
+      alert(dados.mensagem || "Erro ao criar conta.");
+      return;
+    }
+
+    alert("Conta criada com sucesso! Agora você pode fazer login.");
+
+    registerFormElement.reset();
+    loginTab.click();
+
+  } catch (error) {
+    alert("Erro ao conectar com o servidor.");
+    console.error(error);
   }
-
-  users.push({ name, email, password, role });
-  localStorage.setItem("users", JSON.stringify(users));
-
-  alert("Conta criada com sucesso! Agora você pode fazer login.");
-
-  loginTab.click();
 });
 
 const loginFormElement = document.querySelector("#formLogin");
 
-loginFormElement.addEventListener("submit", (e) => {
+loginFormElement.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const email = document.getElementById("loginemail").value;
-  const password = document.getElementById("loginpassword").value;
+  const senha = document.getElementById("loginpassword").value;
 
-  const users = JSON.parse(localStorage.getItem("users")) || [];
-
-  const user = users.find((user) => {
-    return user.email === email && user.password === password;
-  });
-
-  if (!user) {
-    alert("Email ou senha incorretos.");
+  if (!email || !senha) {
+    alert("Informe e-mail e senha.");
     return;
   }
 
-  localStorage.setItem("loggedInUser", JSON.stringify(user));
+  try {
+    const resposta = await fetch("/api/usuarios/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        senha
+      })
+    });
 
-  if (user.role === "bibliotecario") {
-    window.location.href = "bibliotecario.html";
-  } else if (user.role === "leitor") {
-    window.location.href = "leitor.html";
-  } else {
-    alert("Tipo de conta desconhecido.");
+    const usuario = await resposta.json();
+
+    if (!resposta.ok) {
+      alert(usuario.mensagem || "E-mail ou senha incorretos.");
+      return;
+    }
+
+    localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+    localStorage.setItem("loggedInUser", JSON.stringify(usuario));
+
+    if (usuario.perfil === "bibliotecario") {
+      window.location.href = "bibliotecario.html";
+    } else if (usuario.perfil === "leitor") {
+      window.location.href = "leitor.html";
+    } else {
+      alert("Tipo de conta desconhecido.");
+    }
+
+  } catch (error) {
+    alert("Erro ao conectar com o servidor.");
+    console.error(error);
   }
 });
