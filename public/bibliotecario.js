@@ -1,32 +1,90 @@
 const links = document.querySelectorAll(".menu-link");
 const paginas = document.querySelectorAll(".page");
 
+let livrosCarregados = [];
+let emprestimosCarregados = [];
+
 links.forEach((link) => {
   link.addEventListener("click", function (event) {
     event.preventDefault();
 
     const pagina = link.getAttribute("data-page");
 
-    links.forEach((item) => {
-      item.classList.remove("active");
-    });
-
-    paginas.forEach((section) => {
-      section.classList.remove("active");
-    });
-
-    link.classList.add("active");
-
-    const paginaSelecionada = document.getElementById(pagina);
-
-    if (paginaSelecionada) {
-      paginaSelecionada.classList.add("active");
-    }
+    trocarPagina(pagina, link);
   });
 });
 
+const linkVerTodos = document.querySelector(".menu-link-small");
+
+if (linkVerTodos) {
+  linkVerTodos.addEventListener("click", function (event) {
+    event.preventDefault();
+
+    trocarPagina("emprestimos");
+  });
+}
+
+function trocarPagina(pagina, linkAtivo = null) {
+  links.forEach((item) => {
+    item.classList.remove("active");
+  });
+
+  paginas.forEach((section) => {
+    section.classList.remove("active");
+  });
+
+  if (linkAtivo) {
+    linkAtivo.classList.add("active");
+  } else {
+    const linkMenu = document.querySelector(`.menu-link[data-page="${pagina}"]`);
+
+    if (linkMenu) {
+      linkMenu.classList.add("active");
+    }
+  }
+
+  const paginaSelecionada = document.getElementById(pagina);
+
+  if (paginaSelecionada) {
+    paginaSelecionada.classList.add("active");
+  }
+}
+
+function carregarUsuario() {
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  if (!usuarioLogado) {
+    alert("Você precisa fazer login.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  if (usuarioLogado.perfil !== "bibliotecario") {
+    alert("Acesso permitido apenas para bibliotecários.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  document.getElementById("nomeUsuario").textContent = usuarioLogado.nome;
+  document.getElementById("tipoUsuario").textContent = "Bibliotecário";
+
+  document.getElementById("saudacaoUsuario").textContent = usuarioLogado.nome;
+  document.getElementById("saudacaoUsuarioLivros").textContent = usuarioLogado.nome;
+  document.getElementById("saudacaoUsuarioEmprestimos").textContent = usuarioLogado.nome;
+}
+
+const btnLogout = document.querySelector(".logout");
+
+if (btnLogout) {
+  btnLogout.addEventListener("click", () => {
+    localStorage.removeItem("usuarioLogado");
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "index.html";
+  });
+}
+
 const formLivro = document.getElementById("formLivro");
-<<<<<<< HEAD
+const buscarLivro = document.getElementById("buscarLivro");
 
 formLivro.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -40,32 +98,66 @@ formLivro.addEventListener("submit", async (e) => {
   const url = id ? `/api/livros/${id}` : "/api/livros";
   const metodo = id ? "PUT" : "POST";
 
-  const resposta = await fetch(url, {
-    method: metodo,
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      titulo,
-      autor,
-      ano,
-      quantidade
-    })
-  });
+  try {
+    const resposta = await fetch(url, {
+      method: metodo,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        titulo,
+        autor,
+        ano,
+        quantidade
+      })
+    });
 
-  const livro = await resposta.json();
+    const dados = await resposta.json();
 
-  alert(`Livro "${livro.titulo}" cadastrado com sucesso!`);
+    if (!resposta.ok) {
+      alert(dados.mensagem || "Erro ao salvar livro.");
+      return;
+    }
 
-  formLivro.reset();
-  document.getElementById("idLivro").value = "";
-  carregarLivros();
+    if (id) {
+      alert(`Livro "${dados.titulo}" atualizado com sucesso!`);
+    } else {
+      alert(`Livro "${dados.titulo}" cadastrado com sucesso!`);
+    }
+
+    formLivro.reset();
+    document.getElementById("idLivro").value = "";
+    document.getElementById("btnSalvarLivro").textContent = "Cadastrar";
+
+    await carregarLivros();
+
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao conectar com o servidor.");
+  }
 });
 
 async function carregarLivros() {
-  const resposta = await fetch("/api/livros");
-  const livros = await resposta.json();
+  try {
+    const resposta = await fetch("/api/livros");
+    const livros = await resposta.json();
 
+    if (!resposta.ok) {
+      alert(livros.mensagem || "Erro ao carregar livros.");
+      return;
+    }
+
+    livrosCarregados = livros;
+    mostrarLivros(livrosCarregados);
+    atualizarDashboard();
+
+  } catch (error) {
+    console.error("Erro ao carregar livros:", error);
+    alert("Erro ao carregar livros.");
+  }
+}
+
+function mostrarLivros(livros) {
   const tabela = document.getElementById("tabelaLivros");
   tabela.innerHTML = "";
 
@@ -75,7 +167,7 @@ async function carregarLivros() {
         <td>${livro.id}</td>
         <td>${livro.titulo}</td>
         <td>${livro.autor}</td>
-        <td>${livro.ano}</td>
+        <td>${livro.ano || ""}</td>
         <td>${livro.disponivel}</td>
         <td>
           <button onclick="editarLivro(${livro.id})">
@@ -89,154 +181,201 @@ async function carregarLivros() {
       </tr>
     `;
   });
+
+  document.getElementById("contadorLivros").textContent = livros.length;
 }
 
 async function deletarLivro(id) {
-  await fetch(`/api/livros/${id}`, {
-    method: "DELETE"
-  });
+  const confirmar = confirm("Tem certeza que deseja excluir este livro?");
 
-  carregarLivros();
+  if (!confirmar) {
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`/api/livros/${id}`, {
+      method: "DELETE"
+    });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      alert(dados.mensagem || "Erro ao excluir livro.");
+      return;
+    }
+
+    alert(dados.mensagem);
+    await carregarLivros();
+
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao conectar com o servidor.");
+  }
 }
 
-async function editarLivro(id) {
-  const resposta = await fetch("/api/livros");
-  const livros = await resposta.json();
+function editarLivro(id) {
+  const livro = livrosCarregados.find((livro) => livro.id === id);
 
-  const livro = livros.find(livro => livro.id === id);
-
-  if (!livro) return;
+  if (!livro) {
+    alert("Livro não encontrado.");
+    return;
+  }
 
   document.getElementById("idLivro").value = livro.id;
   document.getElementById("tituloLivro").value = livro.titulo;
   document.getElementById("autorLivro").value = livro.autor;
-  document.getElementById("anoLivro").value = livro.ano;
+  document.getElementById("anoLivro").value = livro.ano || "";
   document.getElementById("quantidadeLivro").value = livro.quantidade;
-=======
-const tabelaLivros = document.getElementById("tabelaLivros");
-const contadorLivros = document.getElementById("contadorLivros");
-const totalLivros = document.getElementById("totalLivros");
-const livrosDisponiveis = document.getElementById("livrosDisponiveis");
+  document.getElementById("btnSalvarLivro").textContent = "Atualizar";
 
-async function carregarLivros() {
-  try {
-    const resposta = await fetch("/api/livros");
-    const livros = await resposta.json();
-
-    console.log(livros);
-
-    tabelaLivros.innerHTML = "";
-
-    livros.forEach((livro) => {
-      tabelaLivros.innerHTML += `
-        <tr>
-          <td>${livro.id}</td>
-          <td>${livro.titulo}</td>
-          <td>${livro.autor}</td>
-          <td>${livro.ano}</td>
-          <td>${livro.disponivel}/${livro.quantidade}</td>
-          <td>
-            <button class="btn-editar" onclick="editarLivro(${livro.id})">Editar</button>
-            <button class="btn-excluir" onclick="excluirLivro(${livro.id})">Excluir</button>
-          </td>
-        </tr>
-      `;
-    });
-
-    contadorLivros.textContent = livros.length;
-    totalLivros.textContent = livros.length;
-
-    let totalDisponivel = 0;
-
-    livros.forEach((livro) => {
-      totalDisponivel += Number(livro.disponivel);
-    });
-
-    livrosDisponiveis.textContent = totalDisponivel;
-  } catch (error) {
-    alert("Erro ao carregar livros.");
-  }
+  trocarPagina("livros");
 }
 
-formLivro.addEventListener("submit", async (event) => {
-  event.preventDefault();
+if (buscarLivro) {
+  buscarLivro.addEventListener("input", () => {
+    const texto = buscarLivro.value.toLowerCase();
 
-  const idLivro = document.getElementById("idLivro").value;
-  const titulo = document.getElementById("tituloLivro").value;
-  const autor = document.getElementById("autorLivro").value;
-  const ano = document.getElementById("anoLivro").value;
-  const quantidade = document.getElementById("quantidadeLivro").value;
+    const filtrados = livrosCarregados.filter((livro) => {
+      return (
+        livro.titulo.toLowerCase().includes(texto) ||
+        livro.autor.toLowerCase().includes(texto)
+      );
+    });
 
-  const livro = {
-    titulo,
-    autor,
-    ano,
-    quantidade,
-    disponivel: quantidade
-  };
+    mostrarLivros(filtrados);
+  });
+}
 
+
+async function carregarEmprestimos() {
   try {
-    if (idLivro) {
-      await fetch(`/api/livros/${idLivro}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(livro)
-      });
+    const resposta = await fetch("/api/emprestimos");
+    const emprestimos = await resposta.json();
 
-      alert("Livro atualizado com sucesso!");
-    } else {
-      await fetch("/api/livros", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(livro)
-      });
-
-      alert("Livro cadastrado com sucesso!");
+    if (!resposta.ok) {
+      alert(emprestimos.mensagem || "Erro ao carregar empréstimos.");
+      return;
     }
 
-    formLivro.reset();
-    document.getElementById("idLivro").value = "";
-    document.getElementById("btnSalvarLivro").textContent = "Cadastrar";
+    emprestimosCarregados = emprestimos;
 
-    carregarLivros();
+    mostrarEmprestimos(emprestimosCarregados);
+    mostrarEmprestimosRecentes(emprestimosCarregados);
+    atualizarDashboard();
+
   } catch (error) {
-    alert("Erro ao salvar livro.");
-  }
-});
-
-async function editarLivro(id) {
-  try {
-    const resposta = await fetch(`/api/livros/${id}`);
-    const livro = await resposta.json();
-
-    document.getElementById("idLivro").value = livro.id;
-    document.getElementById("tituloLivro").value = livro.titulo;
-    document.getElementById("autorLivro").value = livro.autor;
-    document.getElementById("anoLivro").value = livro.ano;
-    document.getElementById("quantidadeLivro").value = livro.quantidade;
-
-    document.getElementById("btnSalvarLivro").textContent = "Atualizar";
-  } catch (error) {
-    alert("Erro ao editar livro.");
+    console.error("Erro ao carregar empréstimos:", error);
+    alert("Erro ao carregar empréstimos.");
   }
 }
 
-async function excluirLivro(id) {
+function mostrarEmprestimos(emprestimos) {
+  const tabela = document.getElementById("tabelaEmprestimos");
+  tabela.innerHTML = "";
+
+  emprestimos.forEach((emprestimo) => {
+    const podeDevolver = emprestimo.status !== "devolvido";
+
+    tabela.innerHTML += `
+      <tr>
+        <td>${emprestimo.leitor_nome}</td>
+        <td>${emprestimo.livro_titulo}</td>
+        <td>${formatarDataTela(emprestimo.data_emprestimo)}</td>
+        <td>${formatarDataTela(emprestimo.data_devolucao_prevista)}</td>
+        <td>${emprestimo.status}</td>
+        <td>
+          ${
+            podeDevolver
+              ? `<button onclick="aprovarDevolucao(${emprestimo.id})">Aprovar devolução</button>`
+              : "Devolvido"
+          }
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("contadorEmprestimos").textContent = emprestimos.length;
+}
+
+function mostrarEmprestimosRecentes(emprestimos) {
+  const tabela = document.getElementById("tabelaEmprestimosRecentes");
+  tabela.innerHTML = "";
+
+  const recentes = emprestimos.slice(0, 5);
+
+  recentes.forEach((emprestimo) => {
+    tabela.innerHTML += `
+      <tr>
+        <td>${emprestimo.leitor_nome}</td>
+        <td>${emprestimo.livro_titulo}</td>
+        <td>${formatarDataTela(emprestimo.data_devolucao_prevista)}</td>
+        <td>${emprestimo.status}</td>
+      </tr>
+    `;
+  });
+}
+
+async function aprovarDevolucao(id) {
+  const confirmar = confirm("Deseja aprovar a devolução deste livro?");
+
+  if (!confirmar) {
+    return;
+  }
+
   try {
-    await fetch(`/api/livros/${id}`, {
-      method: "DELETE"
+    const resposta = await fetch(`/api/emprestimos/${id}/devolver`, {
+      method: "PUT"
     });
 
-    alert("Livro excluído com sucesso!");
-    carregarLivros();
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      alert(dados.mensagem || "Erro ao aprovar devolução.");
+      return;
+    }
+
+    alert(dados.mensagem);
+
+    await carregarLivros();
+    await carregarEmprestimos();
+
   } catch (error) {
-    alert("Erro ao excluir livro.");
+    console.error(error);
+    alert("Erro ao conectar com o servidor.");
   }
->>>>>>> 85369adbacd851b6397e3894ccc331e5c6dc49f0
 }
 
+function atualizarDashboard() {
+  const totalLivros = livrosCarregados.length;
+
+  const livrosDisponiveis = livrosCarregados.reduce((total, livro) => {
+    return total + Number(livro.disponivel);
+  }, 0);
+
+  const emprestimosAtivos = emprestimosCarregados.filter((emprestimo) => {
+    return emprestimo.status === "ativo";
+  }).length;
+
+  const livrosAtrasados = emprestimosCarregados.filter((emprestimo) => {
+    return emprestimo.status === "atrasado";
+  }).length;
+
+  document.getElementById("totalLivros").textContent = totalLivros;
+  document.getElementById("livrosDisponiveis").textContent = livrosDisponiveis;
+  document.getElementById("emprestimosAtivos").textContent = emprestimosAtivos;
+  document.getElementById("livrosAtrasados").textContent = livrosAtrasados;
+}
+
+function formatarDataTela(data) {
+  if (!data) return "-";
+
+  const dataFormatada = new Date(data);
+
+  return dataFormatada.toLocaleDateString("pt-BR", {
+    timeZone: "UTC"
+  });
+}
+
+carregarUsuario();
 carregarLivros();
+carregarEmprestimos();
