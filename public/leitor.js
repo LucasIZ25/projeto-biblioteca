@@ -4,6 +4,11 @@ const paginas = document.querySelectorAll(".page");
 const listaLivros = document.getElementById("listaLivros");
 const contadorLivros = document.getElementById("contadorLivros");
 const buscarLivro = document.getElementById("buscarLivro");
+const tabelaEmprestimos = document.getElementById("tabelaEmprestimos");
+
+let usuarioLogado = null;
+let livrosCarregados = [];
+let emprestimosCarregados = [];
 
 links.forEach((link) => {
   link.addEventListener("click", function (event) {
@@ -74,7 +79,7 @@ function mostrarLivros(livros) {
           <p>${livro.ano}</p>
           <span class="disponivel">${livro.disponivel} disponíveis</span>
 
-          <button class="btn-solicitar">
+          <button class="btn-solicitar" onclick="solicitarEmprestimo(${livro.id})">
             Solicitar Empréstimo
           </button>
         </div>
@@ -83,5 +88,94 @@ function mostrarLivros(livros) {
   });
 }
 
+async function solicitarEmprestimo(livroId) {
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  if (!usuarioLogado) {
+    alert("Você precisa fazer login.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  try {
+    const resposta = await fetch("/api/emprestimos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        livro_id: livroId,
+        leitor_id: usuarioLogado.id
+      })
+    });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      alert(dados.mensagem || "Erro ao solicitar empréstimo.");
+      return;
+    }
+
+    alert("Empréstimo solicitado com sucesso!");
+
+    carregarLivros();
+    carregarEmprestimos();
+
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao solicitar empréstimo.");
+  }
+}
+
+async function carregarEmprestimos() {
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  if (!usuarioLogado) {
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`/api/emprestimos?leitor_id=${usuarioLogado.id}`);
+    const emprestimos = await resposta.json();
+
+    tabelaEmprestimos.innerHTML = "";
+
+    emprestimos.forEach((emprestimo) => {
+      tabelaEmprestimos.innerHTML += `
+        <tr>
+          <td>${emprestimo.livro_titulo}</td>
+          <td>${formatarData(emprestimo.data_emprestimo)}</td>
+          <td>${formatarData(emprestimo.data_devolucao_prevista)}</td>
+          <td>${emprestimo.status}</td>
+          <td>
+            ${
+              emprestimo.status !== "devolvido"
+                ? `<button onclick="solicitarDevolucao()">Solicitar devolução</button>`
+                : "Finalizado"
+            }
+          </td>
+        </tr>
+      `;
+    });
+
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao carregar empréstimos.");
+  }
+}
+
+function solicitarDevolucao() {
+  alert("Solicitação registrada. Aguarde o bibliotecário aprovar a devolução.");
+}
+
+function formatarData(data) {
+  if (!data) return "-";
+
+  return new Date(data).toLocaleDateString("pt-BR", {
+    timeZone: "UTC"
+  });
+}
+
 carregarUsuario();
 carregarLivros();
+carregarEmprestimos();
