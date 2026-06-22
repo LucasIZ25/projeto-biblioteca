@@ -46,7 +46,7 @@ function carregarUsuario() {
     return;
   }
 
-  // Exibe o nome do usuário nas saudações do painel
+
   document.getElementById("nomeUsuario").textContent = usuarioLogado.nome;
   document.getElementById("tipoUsuario").textContent = "Bibliotecário";
   
@@ -102,7 +102,7 @@ formLivro.addEventListener("submit", async (e) => {
     document.getElementById("btnSalvarLivro").textContent = "Cadastrar";
 
     await carregarLivros();
-    trocarPagina("dashboard"); // Retorna para a home após salvar
+    trocarPagina("dashboard");
 
   } catch (error) {
     console.error(error);

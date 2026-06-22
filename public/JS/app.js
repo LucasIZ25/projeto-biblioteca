@@ -128,7 +128,7 @@ loginFormElement.addEventListener("submit", async (e) => {
 
     localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
 
-    // Redirecionamento baseado no perfil retornado pelo banco
+  
     if (usuario.perfil === "bibliotecario") {
       window.location.href = "bibliotecario.html";
     } else if (usuario.perfil === "leitor") {

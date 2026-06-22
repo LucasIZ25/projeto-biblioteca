@@ -22,7 +22,6 @@ links.forEach((link) => {
   });
 });
 
-
 function carregarUsuario() {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -33,7 +32,6 @@ function carregarUsuario() {
     return null;
   }
 
-
   document.getElementById("nomeUsuario").textContent = usuarioLogado.nome;
   document.getElementById("saudacaoUsuario").textContent = usuarioLogado.nome;
   document.getElementById("saudacaoUsuario2").textContent = usuarioLogado.nome;
@@ -43,12 +41,16 @@ function carregarUsuario() {
 
 const btnLogout = document.querySelector(".logout");
 if (btnLogout) {
-  btnLogout.addEventListener("click", () => {
+  btnLogout.addEventListener("click", async () => {
+    try {
+      await fetch("/api/usuarios/logout", { method: "POST" });
+    } catch (error) {
+      console.error("Erro ao efetuar logout no servidor:", error);
+    }
     localStorage.removeItem("usuarioLogado");
     window.location.href = "index.html";
   });
 }
-
 
 async function carregarLivros() {
   try {
@@ -70,7 +72,6 @@ function mostrarLivros(livros) {
   contadorLivros.textContent = livros.length;
 
   livros.forEach((livro) => {
-
     const temEstoque = livro.disponivel > 0;
     
     listaLivros.innerHTML += `
@@ -96,7 +97,6 @@ function mostrarLivros(livros) {
   });
 }
 
-
 if (buscarLivro) {
   buscarLivro.addEventListener("input", () => {
     const texto = buscarLivro.value.toLowerCase();
@@ -109,7 +109,6 @@ if (buscarLivro) {
     mostrarLivros(filtrados);
   });
 }
-
 
 window.solicitarEmprestimo = async function(livroId) {
   const usuario = carregarUsuario();
@@ -134,7 +133,6 @@ window.solicitarEmprestimo = async function(livroId) {
 
     alert("Empréstimo realizado com sucesso! Retire seu livro na bancada.");
 
-
     await carregarLivros();
     await carregarEmprestimos();
 
@@ -158,17 +156,25 @@ async function carregarEmprestimos() {
 
     emprestimos.forEach((emp) => {
       const naoDevolvido = emp.status !== "devolvido";
+      
+
+      const classeStatus = `status ${emp.status}-status`;
+      
+     
+      const textoBotao = emp.status === "atrasado" ? "⚠️ Devolver Urgente" : "🔄 Solicitar devolução";
+      const classeBotao = emp.status === "atrasado" ? "btn-devolucao atrasado" : "btn-devolucao ativo";
+
       tabelaEmprestimos.innerHTML += `
         <tr>
-          <td>${emp.livro_titulo}</td>
+          <td><strong>${emp.livro_titulo}</strong></td>
           <td>${formatarData(emp.data_emprestimo)}</td>
           <td>${formatarData(emp.data_devolucao_prevista)}</td>
-          <td><span class="status-${emp.status}">${emp.status}</span></td>
+          <td><span class="${classeStatus}">${emp.status.toUpperCase()}</span></td>
           <td>
             ${
               naoDevolvido
-                ? `<button class="btn-devolver-solicitar" onclick="solicitarDevolucao()">Solicitar devolução</button>`
-                : "Finalizado"
+                ? `<button class="${classeBotao}" onclick="solicitarDevolucao()">${textoBotao}</button>`
+                : '<span class="finalizado-status">✅ Concluído</span>'
             }
           </td>
         </tr>
@@ -188,7 +194,6 @@ function formatarData(data) {
   if (!data) return "-";
   return new Date(data).toLocaleDateString("pt-BR", { timeZone: "UTC" });
 }
-
 
 carregarUsuario();
 carregarLivros();

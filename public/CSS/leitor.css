@@ -16,6 +16,8 @@ body {
     background: white;
     border-right: 1px solid #ddd;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar h2 {
@@ -27,6 +29,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex: 1;
 }
 
 .menu-link {
@@ -34,6 +37,7 @@ body {
     color: #333;
     padding: 12px;
     border-radius: 8px;
+    transition: all 0.2s;
 }
 
 .menu-link:hover,
@@ -42,16 +46,40 @@ body {
     color: white;
 }
 
+.usuario-box {
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+    margin-top: auto;
+}
+
+.usuario-box p {
+    font-size: 0.85rem;
+    color: #666;
+}
+
 .sair {
     display: block;
-    margin-top: 30px;
-    text-decoration: none;
-    color: red;
+    margin-top: 15px;
+    padding: 10px 12px;
+    background: none;
+    border: none;
+    color: #dc2626;
+    text-align: left;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.sair:hover {
+    background: #fee2e2;
 }
 
 .conteudo {
     flex: 1;
     padding: 25px;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .page {
@@ -78,6 +106,11 @@ body {
     width: 250px;
     border: 1px solid #ccc;
     border-radius: 8px;
+    outline: none;
+}
+
+#buscarLivro:focus {
+    border-color: #1565ff;
 }
 
 .grid-livros {
@@ -91,6 +124,9 @@ body {
     border-radius: 10px;
     padding: 15px;
     box-shadow: 0 2px 6px rgba(0,0,0,.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .livro-capa {
@@ -107,9 +143,12 @@ body {
 
 .livro-info h3 {
     margin-bottom: 5px;
+    font-size: 1.1rem;
+    color: #0a2b57;
 }
 
 .livro-info p {
+    font-size: 0.9rem;
     color: #666;
     margin-bottom: 5px;
 }
@@ -117,7 +156,13 @@ body {
 .disponivel {
     display: block;
     color: green;
+    font-weight: bold;
+    font-size: 0.9rem;
     margin: 10px 0;
+}
+
+.disponivel.esgotado {
+    color: #dc2626;
 }
 
 .btn-solicitar {
@@ -127,17 +172,25 @@ body {
     background: #1565ff;
     color: white;
     border-radius: 8px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background 0.2s;
 }
 
 .btn-solicitar:hover {
     background: #004de6;
 }
 
+.btn-solicitar:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
 .tabela-box {
     background: white;
-    padding: 15px;
+    padding: 20px;
     border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
 }
 
 table {
@@ -145,41 +198,81 @@ table {
     border-collapse: collapse;
 }
 
-th,
-td {
-    padding: 12px;
+th, td {
+    padding: 14px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
 th {
-    background: #f4f4f4;
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
 }
 
+/* Badges de Status Refatoradas */
 .status {
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    display: inline-block;
 }
 
 .ativo-status {
     background: #dbeafe;
-    color: blue;
+    color: #1e40af;
 }
 
 .atrasado-status {
     background: #fee2e2;
-    color: red;
+    color: #991b1b;
 }
 
 .devolvido-status {
     background: #dcfce7;
-    color: green;
+    color: #166534;
 }
 
+.finalizado-status {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #166534;
+}
+
+/* Novo Visual dos Botões de Devolução na Tabela */
 .btn-devolucao {
     border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: bold;
     cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-devolucao.ativo {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-devolucao.ativo:hover {
+    background: #1565ff;
+    color: white;
+    border-color: #1565ff;
+    box-shadow: 0 4px 6px rgba(21, 101, 255, 0.15);
+}
+
+.btn-devolucao.atrasado {
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+}
+
+.btn-devolucao.atrasado:hover {
+    background: #e11d48;
+    color: white;
+    border-color: #e11d48;
+    box-shadow: 0 4px 6px rgba(225, 29, 72, 0.15);
 }
