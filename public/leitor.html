@@ -4,23 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Área do Leitor</title>
-  <link rel="stylesheet" href="leitor.css">
+  <link rel="stylesheet" href="css/leitor.css">
   <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgQ5jvlXzOgFZR4tJlt8mWzaP14YoR6SDUdA&s" />
 </head>
 <body>
 
   <aside class="sidebar">
-
     <h2>Biblioteca</h2>
 
     <nav>
-      <a href="#" class="menu-link active" data-page="catalogo">
-        Catálogo
-      </a>
-
-      <a href="#" class="menu-link" data-page="emprestimos">
-        Meus Empréstimos
-      </a>
+      <a href="#" class="menu-link active" data-page="catalogo">Catálogo</a>
+      <a href="#" class="menu-link" data-page="emprestimos">Meus Empréstimos</a>
     </nav>
 
     <div class="usuario-box">
@@ -28,59 +22,36 @@
       <p>Leitor</p>
     </div>
 
-    <a href="index.html" class="sair">
+    <button class="logout sair" style="background: none; border: none; font: inherit; color: inherit; width: 100%; text-align: left; cursor: pointer;">
       Sair
-    </a>
-
+    </button>
   </aside>
 
   <main class="conteudo">
-
     <section id="catalogo" class="page active">
-
       <div class="top">
         <div>
           <h1>Catálogo de Livros</h1>
-          <p>
-            Olá,
-            <span id="saudacaoUsuario">Usuário</span>
-          </p>
+          <p>Olá, <span id="saudacaoUsuario">Usuário</span> 👋</p>
         </div>
-
-        <input
-          type="text"
-          id="buscarLivro"
-          placeholder="Buscar livro ou autor..."
-        >
+        <input type="text" id="buscarLivro" placeholder="Buscar livro ou autor...">
       </div>
 
-      <p>
-        <span id="contadorLivros">0</span>
-        livros disponíveis
-      </p>
-
+      <p><span id="contadorLivros">0</span> livros disponíveis</p>
       <div id="listaLivros" class="grid-livros">
-
-      </div>
-
+        </div>
     </section>
 
     <section id="emprestimos" class="page">
-
       <div class="top">
         <div>
           <h1>Meus Empréstimos</h1>
-          <p>
-            Olá,
-            <span id="saudacaoUsuario2">Usuário</span>
-          </p>
+          <p>Olá, <span id="saudacaoUsuario2">Usuário</span></p>
         </div>
       </div>
 
       <div class="tabela-box">
-
         <table>
-
           <thead>
             <tr>
               <th>Livro</th>
@@ -90,20 +61,13 @@
               <th>Ação</th>
             </tr>
           </thead>
-
           <tbody id="tabelaEmprestimos">
-
-          </tbody>
-
+            </tbody>
         </table>
-
       </div>
-
     </section>
-
   </main>
 
-  <script src="leitor.js"></script>
-
+  <script src="js/leitor.js"></script>
 </body>
 </html>
