@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 const db = require('../config/db'); 
 const conexao = db.promise();
 
-// POST: /api/usuarios/cadastro
 router.post('/cadastro', async (req, res) => {
   try {
     const { nome, email, senha, perfil } = req.body;
@@ -35,7 +34,7 @@ router.post('/cadastro', async (req, res) => {
   }
 });
 
-// POST: /api/usuarios/login
+
 router.post('/login', async (req, res) => {
   try {
     const { email, senha } = req.body;
@@ -59,7 +58,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ mensagem: 'E-mail ou senha incorretos.' });
     }
 
-    // Salva na sessão do servidor Express
+
     req.session.usuario = {
       id: usuario.id,
       nome: usuario.nome,
@@ -74,7 +73,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// POST: /api/usuarios/logout
+
 router.post('/logout', (req, res) => {
   if (req.session) {
     req.session.destroy((err) => {

@@ -8,9 +8,6 @@ const tabelaEmprestimos = document.getElementById("tabelaEmprestimos");
 
 let livrosCarregados = [];
 
-/* ==========================================================================
-   NAVEGAÇÃO INTERNA (TABS)
-   ========================================================================== */
 links.forEach((link) => {
   link.addEventListener("click", function (event) {
     event.preventDefault();
@@ -25,9 +22,7 @@ links.forEach((link) => {
   });
 });
 
-/* ==========================================================================
-   CONTROLE DE SESSÃO E SEGURANÇA
-   ========================================================================== */
+
 function carregarUsuario() {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -38,7 +33,7 @@ function carregarUsuario() {
     return null;
   }
 
-  // Preenche as saudações dinâmicas na interface
+
   document.getElementById("nomeUsuario").textContent = usuarioLogado.nome;
   document.getElementById("saudacaoUsuario").textContent = usuarioLogado.nome;
   document.getElementById("saudacaoUsuario2").textContent = usuarioLogado.nome;
@@ -54,9 +49,7 @@ if (btnLogout) {
   });
 }
 
-/* ==========================================================================
-   CATÁLOGO DE LIVROS
-   ========================================================================== */
+
 async function carregarLivros() {
   try {
     const resposta = await fetch("/api/livros");
@@ -77,7 +70,7 @@ function mostrarLivros(livros) {
   contadorLivros.textContent = livros.length;
 
   livros.forEach((livro) => {
-    // Bloqueia visualmente o botão se o livro não estiver disponível para empréstimo
+
     const temEstoque = livro.disponivel > 0;
     
     listaLivros.innerHTML += `
@@ -103,7 +96,7 @@ function mostrarLivros(livros) {
   });
 }
 
-// Filtro de pesquisa em tempo real
+
 if (buscarLivro) {
   buscarLivro.addEventListener("input", () => {
     const texto = buscarLivro.value.toLowerCase();
@@ -117,9 +110,7 @@ if (buscarLivro) {
   });
 }
 
-/* ==========================================================================
-   AÇÕES DE EMPRÉSTIMO DO LEITOR
-   ========================================================================== */
+
 window.solicitarEmprestimo = async function(livroId) {
   const usuario = carregarUsuario();
   if (!usuario) return;
@@ -143,7 +134,7 @@ window.solicitarEmprestimo = async function(livroId) {
 
     alert("Empréstimo realizado com sucesso! Retire seu livro na bancada.");
 
-    // Atualiza as listas reativamente sem recarregar a página inteira
+
     await carregarLivros();
     await carregarEmprestimos();
 
@@ -198,7 +189,7 @@ function formatarData(data) {
   return new Date(data).toLocaleDateString("pt-BR", { timeZone: "UTC" });
 }
 
-// Inicializa a interface com segurança
+
 carregarUsuario();
 carregarLivros();
 carregarEmprestimos();

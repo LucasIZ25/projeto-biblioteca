@@ -7,7 +7,6 @@ const port = 4000;
 
 app.use(express.json());
 
-// Configuração do middleware de sessão (Antes das rotas e estáticos)
 app.use(session({
   secret: 'capivara', 
   resave: false,                                 
@@ -25,12 +24,10 @@ const rotasUsuarios = require('./routes/usuarios');
 const rotasLivros = require('./routes/livros');
 const rotasEmprestimos = require('./routes/emprestimos');
 
-// Atribuição dos prefixos REST de cada rota
 app.use('/api/usuarios', rotasUsuarios);
 app.use('/api/livros', rotasLivros);
 app.use('/api/emprestimos', rotasEmprestimos);
 
-// Servindo as páginas HTML do Frontend
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });

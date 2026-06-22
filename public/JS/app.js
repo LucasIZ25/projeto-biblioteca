@@ -1,14 +1,13 @@
-// Elementos de alternância das abas (Tabs)
 const loginTab = document.getElementById("loginTab");
 const registerTab = document.getElementById("registerTab");
 const loginArea = document.getElementById("login-form");
 const registerArea = document.getElementById("registerForm");
 const backLogin = document.getElementById("backLogin");
 
-// Elemento de Alerta da Tela
+
 const alertElement = document.querySelector(".alert");
 
-// Funções Auxiliares para Exibir Mensagens
+
 function exibirAlerta(mensagem, tipo = "info") {
   alertElement.textContent = `ⓘ ${mensagem}`;
   alertElement.style.display = "block";
@@ -26,7 +25,7 @@ function limparAlerta() {
   alertElement.style.display = "none";
 }
 
-// Alternar para a aba de Cadastro
+
 registerTab.addEventListener("click", () => {
   limparAlerta();
   loginArea.classList.add("hidden");
@@ -35,7 +34,7 @@ registerTab.addEventListener("click", () => {
   registerTab.classList.add("active");
 });
 
-// Alternar para a aba de Login
+
 loginTab.addEventListener("click", () => {
   limparAlerta();
   loginArea.classList.remove("hidden");
@@ -44,16 +43,14 @@ loginTab.addEventListener("click", () => {
   registerTab.classList.remove("active");
 });
 
-// Botão Voltar para o Login
+
 if (backLogin) {
   backLogin.addEventListener("click", () => {
     loginTab.click();
   });
 }
 
-/* ==========================================================================
-   SUBMIT: CADASTRO DE USUÁRIO
-   ========================================================================== */
+
 const registerFormElement = document.querySelector("#registerForm form");
 
 registerFormElement.addEventListener("submit", async (e) => {
@@ -88,7 +85,7 @@ registerFormElement.addEventListener("submit", async (e) => {
     exibirAlerta("Conta criada com sucesso! Entre agora.", "sucesso");
     registerFormElement.reset();
     
-    // Pequeno delay para o usuário ler o sucesso antes de mudar de aba
+
     setTimeout(() => {
       loginTab.click();
     }, 1500);
@@ -99,9 +96,7 @@ registerFormElement.addEventListener("submit", async (e) => {
   }
 });
 
-/* ==========================================================================
-   SUBMIT: LOGIN DO USUÁRIO
-   ========================================================================== */
+
 const loginFormElement = document.querySelector("#formLogin");
 
 loginFormElement.addEventListener("submit", async (e) => {
@@ -130,7 +125,7 @@ loginFormElement.addEventListener("submit", async (e) => {
       return;
     }
 
-    // Salva o estado do usuário de forma limpa e centralizada
+
     localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
 
     // Redirecionamento baseado no perfil retornado pelo banco

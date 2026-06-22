@@ -4,7 +4,7 @@ const router = express.Router();
 const db = require('../config/db'); 
 const conexao = db.promise();
 
-// Rotina interna
+
 async function atualizarEmprestimosAtrasados() {
   await conexao.query(`
     UPDATE emprestimos
@@ -15,7 +15,7 @@ async function atualizarEmprestimosAtrasados() {
   `);
 }
 
-// GET: /api/emprestimos
+
 router.get('/', async (req, res) => {
   try {
     await atualizarEmprestimosAtrasados();
@@ -44,7 +44,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST: /api/emprestimos
+
 router.post('/', async (req, res) => {
   try {
     const { livro_id, leitor_id } = req.body;
@@ -93,7 +93,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT: /api/emprestimos/:id/devolver
+
 router.put('/:id/devolver', async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -131,7 +131,7 @@ router.put('/:id/devolver', async (req, res) => {
   }
 });
 
-// DELETE: /api/emprestimos/:id
+
 router.delete('/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);

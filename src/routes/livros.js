@@ -4,7 +4,7 @@ const router = express.Router();
 const db = require('../config/db'); 
 const conexao = db.promise();
 
-// GET: /api/livros
+
 router.get('/', async (req, res) => {
   try {
     const [livros] = await conexao.query(`
@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST: /api/livros
+
 router.post('/', async (req, res) => {
   try {
     const { titulo, autor, ano, quantidade } = req.body;
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT: /api/livros/:id
+
 router.put('/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -66,7 +66,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE: /api/livros/:id
 router.delete('/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);

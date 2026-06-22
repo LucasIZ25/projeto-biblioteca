@@ -4,7 +4,7 @@ const paginas = document.querySelectorAll(".page");
 let livrosCarregados = [];
 let emprestimosCarregados = [];
 
-// Gerenciamento de Navegação entre as Páginas Internas
+
 links.forEach((link) => {
   link.addEventListener("click", function (event) {
     event.preventDefault();
@@ -36,9 +36,6 @@ function trocarPagina(pagina, linkAtivo = null) {
   if (paginaSelecionada) paginaSelecionada.classList.add("active");
 }
 
-/* ==========================================================================
-   CONTROLE DE SESSÃO E SEGURANÇA
-   ========================================================================== */
 function carregarUsuario() {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -68,9 +65,7 @@ if (btnLogout) {
   });
 }
 
-/* ==========================================================================
-   GERENCIAMENTO DE LIVROS (CRUD)
-   ========================================================================== */
+
 const formLivro = document.getElementById("formLivro");
 const buscarLivro = document.getElementById("buscarLivro");
 
@@ -191,9 +186,7 @@ if (buscarLivro) {
   });
 }
 
-/* ==========================================================================
-   GERENCIAMENTO DE EMPRÉSTIMOS E DEVOLUÇÕES
-   ========================================================================== */
+
 async function carregarEmprestimos() {
   try {
     const resposta = await fetch("/api/emprestimos");
@@ -265,9 +258,6 @@ window.aprovarDevolucao = function(id) {
     .catch((err) => alert(err.message));
 };
 
-/* ==========================================================================
-   FUNÇÕES DE APOIO (MÉTRICAS E DATAS)
-   ========================================================================== */
 function atualizarDashboard() {
   const totalLivros = livrosCarregados.length;
   const livrosDisponiveis = livrosCarregados.reduce((acc, l) => acc + Number(l.disponivel), 0);
@@ -285,7 +275,6 @@ function formatarDataTela(data) {
   return new Date(data).toLocaleDateString("pt-BR", { timeZone: "UTC" });
 }
 
-// Inicialização da página
 carregarUsuario();
 carregarLivros();
 carregarEmprestimos();
