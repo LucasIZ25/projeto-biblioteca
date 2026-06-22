@@ -74,7 +74,11 @@ function mostrarLivros(livros) {
           <p>${livro.ano}</p>
           <span class="disponivel">${livro.disponivel} disponíveis</span>
 
-          <button class="btn-solicitar">
+          <button 
+            class="btn-solicitar"
+            onclick="solicitarEmprestimo(${livro.id})"
+            ${livro.disponivel <= 0 ? "disabled" : ""}
+          >
             Solicitar Empréstimo
           </button>
         </div>
@@ -83,5 +87,99 @@ function mostrarLivros(livros) {
   });
 }
 
+async function solicitarEmprestimo(idLivro) {
+  const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  if (!usuario) {
+    alert("Usuário não encontrado. Faça login novamente.");
+    return;
+  }
+
+  try {
+    const resposta = await fetch("/api/emprestimos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        leitor_id: usuario.id,
+        livro_id: idLivro
+      })
+    });
+
+    const dados = await resposta.json();
+
+    alert(dados.mensagem);
+
+    carregarLivros();
+    carregarEmprestimos();
+  } catch (error) {
+    alert("Erro ao solicitar empréstimo.");
+  }
+}
+
+async function carregarEmprestimos() {
+  const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  if (!usuario) {
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`/api/emprestimos/${usuario.id}`);
+    const emprestimos = await resposta.json();
+
+    const tabela = document.getElementById("tabelaEmprestimos");
+
+    tabela.innerHTML = "";
+
+    emprestimos.forEach((item) => {
+      tabela.innerHTML += `
+        <tr>
+          <td>${item.livro}</td>
+          <td>${formatarData(item.data_emprestimo)}</td>
+          <td>${formatarData(item.data_devolucao_prevista)}</td>
+          <td>${item.status}</td>
+          <td>
+            ${
+              item.status === "ativo"
+                ? `<button onclick="devolverLivro(${item.id})">Devolver</button>`
+                : "-"
+            }
+          </td>
+        </tr>
+      `;
+    });
+  } catch (error) {
+    alert("Erro ao carregar empréstimos.");
+  }
+}
+
+async function devolverLivro(id) {
+  try {
+    const resposta = await fetch(`/api/emprestimos/${id}/devolver`, {
+      method: "PUT"
+    });
+
+    const dados = await resposta.json();
+
+    alert(dados.mensagem);
+
+    carregarEmprestimos();
+    carregarLivros();
+  } catch (error) {
+    alert("Erro ao devolver livro.");
+  }
+}
+
+function formatarData(data) {
+  if (!data) {
+    return "-";
+  }
+
+  return new Date(data).toLocaleDateString("pt-BR");
+}
+
 carregarUsuario();
 carregarLivros();
+carregarEmprestimos();
