@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pagina de login</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Página de Login e Cadastro</title>
+  <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgQ5jvlXzOgFZR4tJlt8mWzaP14YoR6SDUdA&s" />
 </head>
 <body>
@@ -13,83 +13,76 @@
     <header class="logo">
       <div class="logo-icon">|||</div>
       <h1>Biblioteca</h1>
-
     </header>
 
     <section class="card">
-
-        <div class="login" id="login-form">
-      <h2>Entrar na conta</h2>
-      <p>Use seu e-mail e senha para acessar</p>
-
       <div class="tabs">
         <button id="loginTab" class="active" type="button">Entrar</button>
         <button id="registerTab" type="button">Criar conta</button>
       </div>
 
-      <div class="alert">
+      <div class="alert" style="display: none;">
         ⓘ Preencha todos os campos.
       </div>
 
-      <form id="formLogin">
-        <label for="loginemail">E-mail</label>
-        <input type="email" id="loginemail" placeholder="seu@email.com" />
+      <div class="login" id="login-form">
+        <h2>Entrar na conta</h2>
+        <p>Use seu e-mail e senha para acessar</p>
 
-        <label for="loginpassword">Senha</label>
-        <div class="password">
-          <input type="password" id="loginpassword" placeholder="••••••••" />
-          
-        </div>
+        <form id="formLogin">
+          <label for="loginemail">E-mail</label>
+          <input type="email" id="loginemail" placeholder="seu@email.com" required />
 
-        <div class="demo">
-          <strong>Contas de demonstração:</strong>
-          <p>📚 Bibliotecário: ana@biblioteca.com / 123456</p>
-          <p>👤 Leitor: carlos@email.com / 123456</p>
-        </div>
+          <label for="loginpassword">Senha</label>
+          <div class="password">
+            <input type="password" id="loginpassword" placeholder="••••••••" required />
+          </div>
 
-        <button type="submit" class="submit">Entrar</button>
-      </form>
+          <div class="demo">
+            <strong>Contas de demonstração:</strong>
+            <p>📚 Bibliotecário: ana@biblioteca.com / 123456</p>
+            <p>👤 Leitor: carlos@email.com / 123456</p>
+          </div>
+
+          <button type="submit" class="submit">Entrar</button>
+        </form>
       </div>
 
-     
-
       <div id="registerForm" class="hidden">
-
         <h2>Criar nova conta</h2>
         <p>Preencha os campos abaixo para criar sua conta</p>
 
-        <form>
+        <form id="formRegister">
           <label for="name">Nome completo</label>
-          <input type="text" id="name" placeholder="Seu nome completo" />
+          <input type="text" id="name" placeholder="Seu nome completo" required />
 
           <label for="email">E-mail</label>
-        <input type="email" id="email" placeholder="Seu e-mail" />
+          <input type="email" id="email" placeholder="Seu e-mail" required />
 
           <label for="password">Senha</label>
           <div class="password">
-            <input type="password" id="password" placeholder="••••••••" />
-            
+            <input type="password" id="password" placeholder="••••••••" required />
           </div>
 
-         <select id="role"> 
+          <label for="role">Tipo de Usuário</label>
+          <select id="role" required> 
             <option value="">Selecione o tipo de conta</option>
             <option value="bibliotecario">Bibliotecário</option>
             <option value="leitor">Leitor</option>
-            
-         </select>
-         <button type="button" id="backLogin" class="back-btn">
-           ← Voltar para login
-          </button>
+          </select>
           
-          <button type="submit" class="submit">Criar conta</button>
-
+          <div class="form-buttons">
+            <button type="button" id="backLogin" class="back-btn">
+              ← Voltar para login
+            </button>
+            <button type="submit" class="submit">Criar conta</button>
+          </div>
+        </form>
       </div>
 
     </section>
-
-
   </main>
 
-  <script src="app.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,48 @@
+const express = require('express');
+const path = require('path');
+const session = require('express-session');
+
+const app = express();
+const port = 4000;
+
+app.use(express.json());
+
+// Configuração do middleware de sessão (Antes das rotas e estáticos)
+app.use(session({
+  secret: 'capivara', 
+  resave: false,                                 
+  saveUninitialized: false,                      
+  cookie: { 
+    secure: false,                               
+    maxAge: 1000 * 60 * 60 * 2                   // 2 horas
+  }
+}));
+
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// Importação das rotas modulares
+const rotasUsuarios = require('./routes/usuarios');
+const rotasLivros = require('./routes/livros');
+const rotasEmprestimos = require('./routes/emprestimos');
+
+// Atribuição dos prefixos REST de cada rota
+app.use('/api/usuarios', rotasUsuarios);
+app.use('/api/livros', rotasLivros);
+app.use('/api/emprestimos', rotasEmprestimos);
+
+// Servindo as páginas HTML do Frontend
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+app.get('/bibliotecario', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'bibliotecario.html'));
+});
+
+app.get('/leitor', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'leitor.html'));
+});
+
+app.listen(port, () => {
+  console.log(`Servidor rodando em http://localhost:${port}`);
+});
