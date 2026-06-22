@@ -2,6 +2,36 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+router.get('/livros/:id', (req, res) => {
+  const id = req.params.id;
+
+  const sql = `
+    SELECT 
+      id,
+      titulo,
+      autor,
+      ano,
+      quantidade_total AS quantidade,
+      quantidade_disponivel AS disponivel
+    FROM livros
+    WHERE id = ?
+  `;
+
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ erro: err.message });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        mensagem: 'Livro não encontrado'
+      });
+    }
+
+    res.json(results[0]);
+  });
+});
+
 router.get('/livros', (req, res) => {
   const sql = `
     SELECT 
