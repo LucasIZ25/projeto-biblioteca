@@ -36,8 +36,6 @@ async function carregarLivros() {
     const resposta = await fetch("/api/livros");
     const livros = await resposta.json();
 
-    console.log(livros);
-
     tabelaLivros.innerHTML = "";
 
     livros.forEach((livro) => {
@@ -151,4 +149,107 @@ async function excluirLivro(id) {
   }
 }
 
+const tabelaEmprestimos = document.getElementById("tabelaEmprestimos");
+const tabelaEmprestimosRecentes = document.getElementById("tabelaEmprestimosRecentes");
+const contadorEmprestimos = document.getElementById("contadorEmprestimos");
+const emprestimosAtivos = document.getElementById("emprestimosAtivos");
+const livrosAtrasados = document.getElementById("livrosAtrasados");
+
+async function carregarEmprestimos() {
+  try {
+    const resposta = await fetch("/api/emprestimos-admin");
+    const emprestimos = await resposta.json();
+
+    tabelaEmprestimos.innerHTML = "";
+    tabelaEmprestimosRecentes.innerHTML = "";
+
+    let ativos = 0;
+    let atrasados = 0;
+
+    emprestimos.forEach((item) => {
+      if (item.status === "ativo") {
+        ativos++;
+      }
+
+      if (item.status === "atrasado") {
+        atrasados++;
+      }
+
+      tabelaEmprestimos.innerHTML += `
+        <tr>
+          <td>${item.leitor}</td>
+          <td>${item.livro}</td>
+          <td>${formatarData(item.data_emprestimo)}</td>
+          <td>${formatarData(item.data_devolucao_prevista)}</td>
+          <td>
+            <span class="status ${item.status}">
+              ${item.status}
+            </span>
+          </td>
+          <td>
+            ${
+              item.status !== "devolvido"
+                ? `<button class="btn-devolver" onclick="aprovarDevolucao(${item.id})">Aprovar Devolução</button>`
+                : "-"
+            }
+          </td>
+        </tr>
+      `;
+    });
+
+    emprestimos.slice(0, 5).forEach((item) => {
+      tabelaEmprestimosRecentes.innerHTML += `
+        <tr>
+          <td>${item.leitor}</td>
+          <td>${item.livro}</td>
+          <td>${formatarData(item.data_devolucao_prevista)}</td>
+          <td>
+            <span class="status ${item.status}">
+              ${item.status}
+            </span>
+          </td>
+        </tr>
+      `;
+    });
+
+    contadorEmprestimos.textContent = emprestimos.length;
+    emprestimosAtivos.textContent = ativos;
+    livrosAtrasados.textContent = atrasados;
+  } catch (error) {
+    alert("Erro ao carregar empréstimos.");
+  }
+}
+
+async function aprovarDevolucao(id) {
+  const confirmar = confirm("Deseja aprovar a devolução deste livro?");
+
+  if (!confirmar) {
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`/api/emprestimos/${id}/devolver`, {
+      method: "PUT"
+    });
+
+    const dados = await resposta.json();
+
+    alert(dados.mensagem);
+
+    carregarEmprestimos();
+    carregarLivros();
+  } catch (error) {
+    alert("Erro ao aprovar a devolução.");
+  }
+}
+
+function formatarData(data) {
+  if (!data) {
+    return "-";
+  }
+
+  return new Date(data).toLocaleDateString("pt-BR");
+}
+
+carregarEmprestimos();
 carregarLivros();

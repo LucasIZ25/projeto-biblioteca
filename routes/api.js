@@ -161,9 +161,29 @@ router.post('/emprestimos', (req, res) => {
   });
 });
 
-router.get('')
+router.get('/emprestimos-admin', (req, res) => {
+  const sql = `
+    SELECT 
+      e.id,
+      u.nome AS leitor,
+      l.titulo AS livro,
+      e.data_emprestimo,
+      e.data_devolucao_prevista,
+      e.status
+    FROM emprestimos e 
+    JOIN usuarios u ON u.id = e.leitor_id
+    JOIN livros l ON l.id = e.livro_id 
+    ORDER BY e.id DESC
+  `;
 
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ erro: err.message });
+    }
 
+    res.json(results);
+  });
+});
 
 router.get('/emprestimos/:leitorId', (req, res) => {
   const leitorId = req.params.leitorId;
@@ -178,6 +198,7 @@ router.get('/emprestimos/:leitorId', (req, res) => {
     FROM emprestimos e
     JOIN livros l ON l.id = e.livro_id
     WHERE e.leitor_id = ?
+    ORDER BY e.id DESC
   `;
 
   db.query(sql, [leitorId], (err, results) => {
