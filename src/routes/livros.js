@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
-    const { titulo, autor, ano, quantity } = req.body; // Aceita quantidade vinda do body
+    const { titulo, autor, ano, quantity } = req.body;
 
     if (!titulo || !autor) {
       return res.status(400).json({ mensagem: 'Título e autor são obrigatórios.' });
