@@ -19,7 +19,6 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// Importação das rotas modulares
 const rotasUsuarios = require('./routes/usuarios');
 const rotasLivros = require('./routes/livros');
 const rotasEmprestimos = require('./routes/emprestimos');
